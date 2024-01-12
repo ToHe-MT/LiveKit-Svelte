@@ -71,7 +71,7 @@
             await room.connect(url, token);
 
             const allParticipants = room.participants
-            allParticipants.forEach(participant => {
+            await allParticipants.forEach(participant => {
                 const tracks = participant.getTracks()
                 tracks.forEach(Newtrack=>{
                     const track=Newtrack.track
@@ -79,7 +79,7 @@
                         const remoteVideo = track.attach();
                         remoteVideo.id = `remote-video-${track.sid}`;
                         remoteVideoElement?.append(remoteVideo);
-                    } else if (track.kind = 'audio'){
+                    } else if (track.kind === 'audio'){
                         const remoteAudio = track.attach();
                         remoteAudio.id = `remote-audio-${track.sid}`;
                         remoteAudioElement?.append(remoteAudio);
