@@ -86,13 +86,13 @@
         publication: RemoteTrackPublication,
         participant: RemoteParticipant
     ) {
-        const remote = track.detach();
-        const remoteElementId = `remote-${participant.sid}-${track.sid}`;
-        const remoteElement = document.getElementById(remoteElementId);
+        // track.detach();
+        // const remoteElementId = `remote-${participant.sid}-${track.sid}`;
+        // const remoteElement = document.getElementById(remoteElementId);
 
-        if (remoteElement) {
-            remoteElement.parentNode?.removeChild(remoteElement);
-        }
+        // if (remoteElement) {
+        //     remoteElement.parentNode?.removeChild(remoteElement);
+        // }
     }
 
     function handleDisconnect() {
