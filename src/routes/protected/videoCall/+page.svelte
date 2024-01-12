@@ -158,7 +158,7 @@
     <div id="videosContainer">
         <div id="localVideo">
             <!-- Add your local video content here -->
-            <div id="localVideoText">You</div>
+            <div id="localVideoText" class='remoteVideoText'>You</div>
         </div>
 
         <div id="remoteVideo">
