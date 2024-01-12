@@ -76,7 +76,7 @@
         if (track.kind === Track.Kind.Video) {
             console.log(track);
             const remote = track.attach();
-            remote.id = `remote-${participant.sid}-${track.sid}`;
+            // remote.id = `remote-${participant.sid}-${track.sid}`;
             remoteVideoElement?.append(remote);
         }
     }
@@ -104,11 +104,9 @@
 <div id="localVideo"></div>
 
 <div id="remoteVideo">
-    {#if remoteVideoElement}
         <h2>Remote Video</h2>
         <!-- svelte-ignore a11y-media-has-caption -->
         <video autoplay></video>
-    {/if}
 </div>
 
 <style>
