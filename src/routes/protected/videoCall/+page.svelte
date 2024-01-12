@@ -4,6 +4,7 @@
     const url = "wss://sattest-qx98pryz.livekit.cloud";
     const token = data.data;
     import { Room, Track, VideoPresets } from "livekit-client";
+    import { trackTypeFromJSON } from "livekit-server-sdk/dist/proto/livekit_models";
     import { onDestroy, onMount } from "svelte";
     // import VideoDisplay from './VideoDisplay.svelte';
 
@@ -89,19 +90,24 @@
                             remoteContainer.id = `remote-video-${track.sid}`;
                             remoteContainer.className = `remoteVideo`;
 
-                            remoteContainer.append(remoteVideo);
-
                             const videoInfo = document.createElement("div");
                             videoInfo.textContent = `${participant.identity}`;
-                            videoInfo.className = "remoteVideoText"; 
+                            videoInfo.className = "remoteVideoText";
 
-                            remoteContainer.appendChild(videoInfo);
-                            
-                            remoteVideoElement?.appendChild(videoInfo);
+                            remoteContainer.append(remoteVideo, videoInfo);
+
+                            remoteVideoElement?.appendChild(remoteContainer);
                         } else if (track.kind === "audio") {
                             const remoteAudio = track.attach();
                             remoteAudio.id = `remote-audio-${track.sid}`;
                             remoteAudioElement?.append(remoteAudio);
+                        }
+                        if (track.streamState === "active") {
+                            console.log("active");
+                        } else if (track.streamState === "paused") {
+                            console.log("Paused");
+                        } else {
+                            console.log("Unknown");
                         }
                     }
                 });
@@ -164,6 +170,7 @@
         </div>
 
         <div id="localAudio">
+            <div class="removeVideoText"></div>
             <!-- Add your local audio content here -->
         </div>
     </div>
@@ -208,7 +215,8 @@
     #localVideoText {
         position: absolute;
         bottom: 10px; /* Adjust the distance from the bottom */
-        right: 10px; /* Adjust the distance from the left */
+        right: 0;
+        left:0; /* Adjust the distance from the left */
         color: white;
         font-size: 18px;
         font-weight: bold;
@@ -217,16 +225,15 @@
     }
 
     .remoteVideoText {
-      position: absolute;
-    bottom: 10px;
-    left: 0px;
-    color: white;
-    font-size: 12px;
-    font-weight: bold;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    pointer-events: none;
-    right: 0px;
-
+        position: absolute;
+        bottom: 10px;
+        left: 0px;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        pointer-events: none;
+        right: 0px;
     }
 
     button {
@@ -243,5 +250,9 @@
 
     button:hover {
         background-color: #0f52ba;
+    }
+    #localAudio,
+    #remoteAudio {
+        display: none;
     }
 </style>
