@@ -38,11 +38,7 @@
                 handleDisconnect
             );
 
-            room.on("participantConnected", (participant) => {
-                participant.on("trackPublished", (track) => {
-                    handleTrackSubscribed;
-                });
-            });
+            
             await room.connect(url, token);
             console.log("connected to room", room.name);
 
@@ -63,6 +59,11 @@
         room.localParticipant.setCameraEnabled(false);
         room.localParticipant.setMicrophoneEnabled(false);
     });
+    room.on("participantConnected", (participant) => {
+                participant.on("trackPublished", (track) => {
+                    handleTrackSubscribed;
+                });
+            });
 
     function handleTrackSubscribed(
         track: RemoteTrack,
