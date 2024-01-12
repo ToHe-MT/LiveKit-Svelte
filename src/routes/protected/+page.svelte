@@ -13,5 +13,4 @@
 <p>Email: {user.email}</p>
 
 <a href='/logout'>Logout</a>
-<a href='/protected/Host'>Create Video Call</a>
-<a href='/protected/Join'>Join Video Call</a>
+<a href='/protected/videoCall'>VideoCall </a>
