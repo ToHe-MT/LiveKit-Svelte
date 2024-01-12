@@ -58,13 +58,30 @@
                     const remoteVideo = track.detach();
                     const remoteVideoElementId = `remote-video-${track.sid}`;
                     const remoteVideoElement = document.getElementById(remoteVideoElementId);
+                    console.log("child removed")
                     remoteVideoElement.removeChild(remoteVideoElement);
-                } else if (track.kind === Track.Kind.Audio) {
+                } else if (track.kind === 'audio') {
                     const remoteAudio = track.detach();
                     const remoteAudioElementId = `remote-audio-${track.sid}`;
                     const remoteAudioElement = document.getElementById(remoteAudioElementId);
+                    console.log("child removed")
                     remoteAudioElement.removeChild(remoteVideoElement);
-    }
+            }})
+            room.on("disconnected", (participant) => {
+                console.log(participant)
+            //     if(track.kind==="video"){
+            //         const remoteVideo = track.detach();
+            //         const remoteVideoElementId = `remote-video-${track.sid}`;
+            //         const remoteVideoElement = document.getElementById(remoteVideoElementId);
+            //         console.log("child removed")
+            //         remoteVideoElement.removeChild(remoteVideoElement);
+            //     } else if (track.kind === 'audio') {
+            //         const remoteAudio = track.detach();
+            //         const remoteAudioElementId = `remote-audio-${track.sid}`;
+            //         const remoteAudioElement = document.getElementById(remoteAudioElementId);
+            //         console.log("child removed")
+            //         remoteAudioElement.removeChild(remoteVideoElement);
+            // }
 
             });
 
@@ -132,8 +149,7 @@
     // Perform any necessary cleanup before redirecting
     room.localParticipant.setCameraEnabled(false);
     room.localParticipant.setMicrophoneEnabled(false);
-
-    // Redirect to /protected route
+    room.disconnect()
     window.location.href = '/protected';
   }
 </script>
