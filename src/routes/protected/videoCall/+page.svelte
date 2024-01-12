@@ -64,10 +64,6 @@
         room.localParticipant.setMicrophoneEnabled(false);
     });
 
-    room.on("participantConnected", (participant) => {
-        console.log(participant, "NEW PARTICIPANT");
-    });
-
     function handleTrackSubscribed(
         track: RemoteTrack,
         publication: RemoteTrackPublication,
@@ -76,7 +72,7 @@
         if (track.kind === Track.Kind.Video) {
             console.log(track);
             const remote = track.attach();
-            // remote.id = `remote-${participant.sid}-${track.sid}`;
+            remote.id = `remote-${participant.sid}-${track.sid}`;
             remoteVideoElement?.append(remote);
         }
     }
@@ -86,13 +82,13 @@
         publication: RemoteTrackPublication,
         participant: RemoteParticipant
     ) {
-        // track.detach();
-        // const remoteElementId = `remote-${participant.sid}-${track.sid}`;
-        // const remoteElement = document.getElementById(remoteElementId);
+        track.detach();
+        const remoteElementId = `remote-${participant.sid}-${track.sid}`;
+        const remoteElement = document.getElementById(remoteElementId);
 
-        // if (remoteElement) {
-        //     remoteElement.parentNode?.removeChild(remoteElement);
-        // }
+        if (remoteElement) {
+            remoteElement.parentNode?.removeChild(remoteElement);
+        }
     }
 
     function handleDisconnect() {
@@ -106,7 +102,7 @@
 <div id="remoteVideo">
         <h2>Remote Video</h2>
         <!-- svelte-ignore a11y-media-has-caption -->
-        <video autoplay></video>
+        <!-- <video autoplay></video> -->
 </div>
 
 <style>
