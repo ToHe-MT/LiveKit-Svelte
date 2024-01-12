@@ -33,9 +33,10 @@
         remoteVideoElement = document.getElementById("remoteVideo");
         localVideoElement = document.getElementById("localVideo");
         try {
-            room.on(RoomEvent.TrackSubscribed, handleTrackSubscribed)
-                .on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed)
-                .on(RoomEvent.Disconnected, handleDisconnect)
+            room.on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed).on(
+                RoomEvent.Disconnected,
+                handleDisconnect
+            );
 
             room.on("participantConnected", (participant) => {
                 participant.on("trackPublished", (track) => {
@@ -47,6 +48,7 @@
 
             await room.localParticipant.enableCameraAndMicrophone();
             const l = room.localParticipant.getTracks()[1].track;
+            console.log(l);
 
             if (l) {
                 const element = l.attach();
@@ -58,12 +60,12 @@
     });
 
     onDestroy(() => {
-        room.localParticipant.setCameraEnabled(false)
-        room.localParticipant.setMicrophoneEnabled(false)
+        room.localParticipant.setCameraEnabled(false);
+        room.localParticipant.setMicrophoneEnabled(false);
     });
 
     room.on("participantConnected", (participant) => {
-        console.log(participant, "NEW PARTICIPANT")
+        console.log(participant, "NEW PARTICIPANT");
     });
 
     function handleTrackSubscribed(
@@ -72,7 +74,10 @@
         participant: RemoteParticipant
     ) {
         if (track.kind === Track.Kind.Video) {
-            console.log("New Video Incoming");
+            console.log(track);
+            const remote = track.attach();
+            remote.id = `remote-${participant.sid}-${track.sid}`;
+            remoteVideoElement?.append(remote);
         }
     }
 
@@ -81,8 +86,13 @@
         publication: RemoteTrackPublication,
         participant: RemoteParticipant
     ) {
-        console.log("SOMEONE QUITTING")
-        track.detach();
+        const remote = track.detach();
+        const remoteElementId = `remote-${participant.sid}-${track.sid}`;
+        const remoteElement = document.getElementById(remoteElementId);
+
+        if (remoteElement) {
+            remoteElement.parentNode?.removeChild(remoteElement);
+        }
     }
 
     function handleDisconnect() {
@@ -93,7 +103,7 @@
 <h1>Meeting Room</h1>
 <div id="localVideo"></div>
 
-<div>
+<div id="remoteVideo">
     {#if remoteVideoElement}
         <h2>Remote Video</h2>
         <!-- svelte-ignore a11y-media-has-caption -->
