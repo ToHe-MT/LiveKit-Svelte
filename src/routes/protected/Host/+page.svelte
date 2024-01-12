@@ -58,7 +58,8 @@
     });
 
     onDestroy(() => {
-        console.log("Quitting")
+        room.localParticipant.setCameraEnabled(false)
+        room.localParticipant.setMicrophoneEnabled(false)
     });
 
     room.on("participantConnected", (participant) => {
