@@ -28,23 +28,49 @@
     // room.prepareConnection(url, token);
     export let remoteVideoElement: HTMLElement | null;
     export let localVideoElement: HTMLElement | null;
+    export let remoteAudioElement: HTMLElement | null;
+    export let localAudioElement: HTMLElement | null;
 
     onMount(async () => {
         remoteVideoElement = document.getElementById("remoteVideo");
         localVideoElement = document.getElementById("localVideo");
+        remoteAudioElement = document.getElementById("remoteAudio");
+        localAudioElement = document.getElementById("localAudio");
         try {
-            room.on(RoomEvent.TrackUnsubscribed, handleTrackUnsubscribed).on(
-                RoomEvent.Disconnected,
-                handleDisconnect
-            );
+            room.on("participantConnected", (participant) => {
+                console.log("NEW PARTICIPANT");
+                participant.on("trackSubscribed", (track) => {
+                    if (track.kind === Track.Kind.Video) {
+                        const remoteVideo = track.attach();
+                        remoteVideo.id = `remote-video-${track.sid}`;
+                        remoteVideoElement?.append(remoteVideo);
+                    } if (track.kind === Track.Kind.Audio) {
+                        const remoteAudio = track.attach();
+                        remoteAudio.id = `remote-video-${track.sid}`;
+                        remoteAudioElement?.append(remoteAudio);
+                    }
+                });
+            });
+            room.on("trackUnsubscribed", (track) => {
+                if(track.kind==="video"){
+                    const remoteVideo = track.detach();
+                    const remoteVideoElementId = `remote-video-${track.sid}`;
+                    const remoteVideoElement = document.getElementById(remoteVideoElementId);
+                    remoteVideoElement.removeChild(remoteVideoElement);
+                } else if (track.kind === Track.Kind.Audio) {
+                    const remoteAudio = track.detach();
+                    const remoteAudioElementId = `remote-audio-${track.sid}`;
+                    const remoteAudioElement = document.getElementById(remoteAudioElementId);
+                    remoteAudioElement.removeChild(remoteVideoElement);
+    }
 
-            
+            });
+
             await room.connect(url, token);
             console.log("connected to room", room.name);
 
             await room.localParticipant.enableCameraAndMicrophone();
             const l = room.localParticipant.getTracks()[1].track;
-            console.log(l);
 
             if (l) {
                 const element = l.attach();
@@ -59,11 +85,6 @@
         room.localParticipant.setCameraEnabled(false);
         room.localParticipant.setMicrophoneEnabled(false);
     });
-    room.on("participantConnected", (participant) => {
-                participant.on("trackPublished", (track) => {
-                    handleTrackSubscribed;
-                });
-            });
 
     function handleTrackSubscribed(
         track: RemoteTrack,
@@ -71,44 +92,122 @@
         participant: RemoteParticipant
     ) {
         if (track.kind === Track.Kind.Video) {
-            console.log(track);
+            console.log(track, "NEWVIDEO");
             const remote = track.attach();
             remoteVideoElement?.append(remote);
-        }
-    }
-
-    function handleTrackUnsubscribed(
-        track: RemoteTrack,
-        publication: RemoteTrackPublication,
-        participant: RemoteParticipant
-    ) {
-        track.detach();
-        const remoteElementId = `remote-${participant.sid}-${track.sid}`;
-        const remoteElement = document.getElementById(remoteElementId);
-
-        if (remoteElement) {
-            remoteElement.parentNode?.removeChild(remoteElement);
         }
     }
 
     function handleDisconnect() {
         console.log("disconnected from room, should destroy the track");
     }
+
+    let isMicrophoneEnabled = true;
+  let isCameraEnabled = true;
+  function toggleMicrophone() {
+    isMicrophoneEnabled = !isMicrophoneEnabled;
+    room.localParticipant.setMicrophoneEnabled(isMicrophoneEnabled);
+  }
+
+  function toggleCamera() {
+    isCameraEnabled = !isCameraEnabled;
+    room.localParticipant.setCameraEnabled(isCameraEnabled);
+  }
+
+  function quitMeeting() {
+    // Perform any necessary cleanup before redirecting
+    room.localParticipant.setCameraEnabled(false);
+    room.localParticipant.setMicrophoneEnabled(false);
+
+    // Redirect to /protected route
+    window.location.href = '/protected';
+  }
 </script>
-
-<h1>Meeting Room</h1>
-<div id="localVideo"></div>
-
-<div id="remoteVideo">
-        <h2>Remote Video</h2>
-        <!-- svelte-ignore a11y-media-has-caption -->
-        <!-- <video autoplay></video> -->
-</div>
-
-<style>
-    video {
-        width: 100%;
-        max-width: 300px;
-        margin: 10px;
+<style lang="css">
+    h1 {
+      color: #333;
+      text-align: center;
     }
-</style>
+  
+    #mainContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    #videosContainer {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 10px;
+      margin-top: 20px;
+    }
+  
+    #localVideo {
+      position: relative;
+      text-align: center;
+    }
+  
+    #localVideoText {
+      position: absolute;
+      bottom: 10px; /* Adjust the distance from the bottom */
+      right: 10px; /* Adjust the distance from the left */
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      pointer-events: none; /* To allow clicking through the text */
+    }
+  
+  
+    button {
+    margin: 5px;
+    padding: 12px 18px;
+    font-size: 14px;
+    cursor: pointer;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+  }
+
+  button:hover {
+    background-color: #0f52ba;
+  }
+  </style>
+  
+  <div id="mainContainer">
+    <h1>Meeting Room</h1>
+  
+    <div id="videosContainer">
+      <div id="localVideo">
+        <!-- Add your local video content here -->
+        <div id="localVideoText">You</div>
+      </div>
+  
+      <div id="remoteVideo">
+        <!-- Add your remote video content here -->
+      </div>
+  
+      <div id="remoteAudio">
+        <!-- Add your remote audio content here -->
+      </div>
+  
+      <div id="localAudio">
+        <!-- Add your local audio content here -->
+      </div>
+    </div>
+  <div class="buttonContainer">
+      
+        <button on:click={toggleMicrophone}>
+          {isMicrophoneEnabled ? 'Disable Microphone' : 'Enable Microphone'}
+        </button>
+      
+        <button on:click={toggleCamera}>
+          {isCameraEnabled ? 'Disable Camera' : 'Enable Camera'}
+        </button>
+      
+        <button on:click={quitMeeting}>Quit Meeting</button>
+  </div>
+  </div>
+  
