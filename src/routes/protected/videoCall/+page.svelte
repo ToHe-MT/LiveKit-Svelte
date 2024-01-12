@@ -72,7 +72,6 @@
         if (track.kind === Track.Kind.Video) {
             console.log(track);
             const remote = track.attach();
-            remote.id = `remote-${participant.sid}-${track.sid}`;
             remoteVideoElement?.append(remote);
         }
     }
