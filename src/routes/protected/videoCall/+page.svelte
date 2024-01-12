@@ -36,9 +36,11 @@
         localVideoElement = document.getElementById("localVideo");
         remoteAudioElement = document.getElementById("remoteAudio");
         localAudioElement = document.getElementById("localAudio");
+
+
+
         try {
             room.on("participantConnected", (participant) => {
-                console.log("NEW PARTICIPANT");
                 participant.on("trackSubscribed", (track) => {
                     if (track.kind === Track.Kind.Video) {
                         const remoteVideo = track.attach();
@@ -46,7 +48,7 @@
                         remoteVideoElement?.append(remoteVideo);
                     } if (track.kind === Track.Kind.Audio) {
                         const remoteAudio = track.attach();
-                        remoteAudio.id = `remote-video-${track.sid}`;
+                        remoteAudio.id = `remote-audio-${track.sid}`;
                         remoteAudioElement?.append(remoteAudio);
                     }
                 });
@@ -67,7 +69,23 @@
             });
 
             await room.connect(url, token);
-            console.log("connected to room", room.name);
+
+            const allParticipants = room.participants
+            allParticipants.forEach(participant => {
+                const tracks = participant.getTracks()
+                tracks.forEach(Newtrack=>{
+                    const track=Newtrack.track
+                    if(track.kind==='video'){
+                        const remoteVideo = track.attach();
+                        remoteVideo.id = `remote-video-${track.sid}`;
+                        remoteVideoElement?.append(remoteVideo);
+                    } else if (track.kind = 'audio'){
+                        const remoteAudio = track.attach();
+                        remoteAudio.id = `remote-audio-${track.sid}`;
+                        remoteAudioElement?.append(remoteAudio);
+                    }
+                })
+});
 
             await room.localParticipant.enableCameraAndMicrophone();
             const l = room.localParticipant.getTracks()[1].track;
@@ -92,15 +110,11 @@
         participant: RemoteParticipant
     ) {
         if (track.kind === Track.Kind.Video) {
-            console.log(track, "NEWVIDEO");
             const remote = track.attach();
             remoteVideoElement?.append(remote);
         }
     }
 
-    function handleDisconnect() {
-        console.log("disconnected from room, should destroy the track");
-    }
 
     let isMicrophoneEnabled = true;
   let isCameraEnabled = true;
