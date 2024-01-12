@@ -9,17 +9,17 @@ Once you've created a project and installed dependencies with `npm install` (or 
 Configure env variables
 1. Create .env file in root
 
-Untuk memudahkan recruiter, saya mengirimkan sekalian dengan .env
+To Help Recruitment Process, I include the .env
 ```bash
-AUTH_SECRET="abcdefghijklmnopqrstuvwxyz123456"
+AUTH_SECRET=<32CharLONG>
 
-GOOGLE_CLIENT_ID="1023155458771-6udtrckmg0ksf0rt8ti2i2n8u86qmtrd.apps.googleusercontent.com"
-GOOGLE_CLIENT_SECRET="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"
+GOOGLE_CLIENT_ID=<GET FROM OAUTH API GOOGLE>
+GOOGLE_CLIENT_SECRET=<GET FROM OAUTH API GOOGLE>
 
-MONGODB_CONNECTION_STRING='mongodb+srv://asdf:asdf@cluster0.x4cjrx2.mongodb.net/?retryWrites=true&w=majority'
+MONGODB_CONNECTION_STRING=<Your MongoDB Server>
 
-LK_API_KEY="APIK2imsq9rVRhM"
-LK_API_SECRET="mulwK8SNePxlcOF09CH0nP0fWrtPA6PVefX4q42JZbLC"
+LK_API_KEY=<GET FROM LIVEKIT API>
+LK_API_SECRET=<GET FROM LIVEKIT API>
 ```
 
 ```bash
